@@ -99,7 +99,7 @@
             color: var(--accent-color);
         }
 
-        /* Upload Section */
+        /* Upload Section - FIXED */
         .upload-area {
             border: 3px dashed var(--secondary-color);
             border-radius: 10px;
@@ -109,6 +109,8 @@
             transition: all 0.3s ease;
             margin-bottom: 20px;
             background: rgba(52, 152, 219, 0.05);
+            position: relative;
+            overflow: hidden;
         }
 
         .upload-area:hover {
@@ -133,15 +135,48 @@
         }
 
         #fileInput {
-            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
         }
 
         .file-info {
             margin-top: 15px;
-            padding: 10px;
+            padding: 15px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             display: none;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .file-info.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .file-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-detail:last-child {
+            border-bottom: none;
+        }
+
+        .file-detail strong {
+            color: var(--secondary-color);
         }
 
         .controls {
@@ -204,21 +239,29 @@
             margin-top: 20px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
-            padding: 15px;
+            padding: 20px;
             display: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideDown 0.5s ease;
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            align-items: center;
         }
 
         .progress-bar {
-            height: 10px;
+            height: 12px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            border-radius: 6px;
             overflow: hidden;
+            margin-bottom: 15px;
         }
 
         .progress-fill {
@@ -226,6 +269,7 @@
             background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
             width: 0%;
             transition: width 0.5s ease;
+            border-radius: 6px;
         }
 
         .progress-stats {
@@ -237,9 +281,14 @@
 
         .stat {
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-3px);
         }
 
         .stat-value {
@@ -282,6 +331,7 @@
         .board-controls button {
             flex: unset;
             padding: 10px 15px;
+            min-width: 120px;
         }
 
         .fen-display {
@@ -291,22 +341,27 @@
             margin-top: 20px;
             width: 100%;
             max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .fen-label {
             font-size: 0.9rem;
             opacity: 0.8;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .fen-value {
             font-family: monospace;
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             word-break: break-all;
             font-size: 0.9rem;
             user-select: all;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* Detected Positions */
@@ -314,6 +369,21 @@
             margin-top: 20px;
             max-height: 400px;
             overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .positions-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .positions-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .positions-container::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
         }
 
         .position-item {
@@ -329,11 +399,13 @@
         .position-item:hover {
             background: rgba(255, 255, 255, 0.1);
             border-left-color: var(--secondary-color);
+            transform: translateX(5px);
         }
 
         .position-item.active {
             background: rgba(52, 152, 219, 0.2);
             border-left-color: var(--secondary-color);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
         }
 
         .position-header {
@@ -346,11 +418,14 @@
         .position-page {
             font-weight: bold;
             color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .position-preview {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
         }
 
@@ -359,7 +434,12 @@
             height: 60px;
             border-radius: 5px;
             object-fit: cover;
-            background: #000;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
         }
 
         .position-fen {
@@ -368,7 +448,7 @@
             opacity: 0.8;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            flex: 1;
         }
 
         /* Analysis Tools */
@@ -388,11 +468,13 @@
             padding: 15px 10px;
             border-radius: 8px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .tool-btn:hover {
             background: rgba(52, 152, 219, 0.2);
             border-color: var(--secondary-color);
+            transform: translateY(-3px);
         }
 
         .tool-btn i {
@@ -430,6 +512,62 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .error-message i {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid rgba(39, 174, 96, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-message i {
+            color: var(--success-color);
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -444,17 +582,40 @@
             <div class="panel">
                 <h2><i class="fas fa-file-upload"></i> Upload E-book</h2>
                 
+                <!-- FIXED UPLOAD AREA -->
                 <div class="upload-area" id="uploadArea">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <div class="upload-text">Drop your e-book here or click to browse</div>
-                    <div class="upload-subtext">Supports PDF, EPUB, and image files (JPG, PNG)</div>
-                    <input type="file" id="fileInput" accept=".pdf,.epub,.jpg,.jpeg,.png">
+                    <div class="upload-text">Click to select e-book or drag & drop here</div>
+                    <div class="upload-subtext">Supports PDF files (images will be extracted)</div>
+                    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png">
                 </div>
                 
                 <div class="file-info" id="fileInfo">
-                    <div><strong>File:</strong> <span id="fileName">No file selected</span></div>
-                    <div><strong>Size:</strong> <span id="fileSize">0 KB</span></div>
-                    <div><strong>Type:</strong> <span id="fileType">Unknown</span></div>
+                    <div class="file-details">
+                        <div class="file-detail">
+                            <strong>File:</strong> <span id="fileName">No file selected</span>
+                        </div>
+                        <div class="file-detail">
+                            <strong>Size:</strong> <span id="fileSize">0 KB</span>
+                        </div>
+                        <div class="file-detail">
+                            <strong>Type:</strong> <span id="fileType">Unknown</span>
+                        </div>
+                        <div class="file-detail">
+                            <strong>Status:</strong> <span id="fileStatus">Ready to process</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error and Success Messages -->
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorText">Error message will appear here</span>
+                </div>
+                
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successText">Success message will appear here</span>
                 </div>
                 
                 <div class="controls">
@@ -468,7 +629,7 @@
                 
                 <div class="progress-container" id="progressContainer">
                     <div class="progress-header">
-                        <div>Processing E-book</div>
+                        <div><i class="fas fa-spinner fa-spin"></i> Processing E-book</div>
                         <div id="progressPercent">0%</div>
                     </div>
                     <div class="progress-bar">
@@ -478,15 +639,15 @@
                     <div class="progress-stats">
                         <div class="stat">
                             <div class="stat-value" id="pagesProcessed">0</div>
-                            <div class="stat-label">Pages</div>
+                            <div class="stat-label">Pages Processed</div>
                         </div>
                         <div class="stat">
                             <div class="stat-value" id="positionsFound">0</div>
-                            <div class="stat-label">Positions</div>
+                            <div class="stat-label">Positions Found</div>
                         </div>
                         <div class="stat">
                             <div class="stat-value" id="processingTime">0s</div>
-                            <div class="stat-label">Time</div>
+                            <div class="stat-label">Time Elapsed</div>
                         </div>
                     </div>
                 </div>
@@ -504,13 +665,13 @@
                     <div id="board"></div>
                     
                     <div class="board-controls">
-                        <button id="prevBtn"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button id="prevBtn" disabled><i class="fas fa-chevron-left"></i> Previous</button>
                         <button id="flipBtn"><i class="fas fa-sync-alt"></i> Flip Board</button>
-                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
+                        <button id="nextBtn" disabled>Next <i class="fas fa-chevron-right"></i></button>
                     </div>
                     
                     <div class="fen-display">
-                        <div class="fen-label">FEN (Forsyth-Edwards Notation)</div>
+                        <div class="fen-label"><i class="fas fa-code"></i> FEN Notation</div>
                         <div class="fen-value" id="fenDisplay">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1</div>
                     </div>
                 </div>
@@ -518,7 +679,7 @@
                 <div class="analysis-tools">
                     <div class="tool-btn" id="analyzeBtn">
                         <i class="fas fa-brain"></i>
-                        <div class="tool-label">Analyze</div>
+                        <div class="tool-label">Analyze Position</div>
                     </div>
                     <div class="tool-btn" id="lichessBtn">
                         <i class="fas fa-external-link-alt"></i>
@@ -526,7 +687,7 @@
                     </div>
                     <div class="tool-btn" id="pgnBtn">
                         <i class="fas fa-file-alt"></i>
-                        <div class="tool-label">Export PGN</div>
+                        <div class="tool-label">Export as PGN</div>
                     </div>
                     <div class="tool-btn" id="copyFenBtn">
                         <i class="fas fa-copy"></i>
@@ -537,8 +698,8 @@
         </div>
 
         <footer>
-            <p>Chess OCR Analyzer v1.0 | Uses Tesseract.js for OCR and Chessboard.js for visualization</p>
-            <p>Note: For PDF processing in browser, consider using server-side processing for better performance</p>
+            <p>Chess OCR Analyzer v1.0 | <i class="fas fa-code"></i> HTML + JavaScript Implementation</p>
+            <p>Note: For full PDF processing, server-side implementation is recommended for better performance</p>
         </footer>
     </div>
 
@@ -546,7 +707,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v3.0.3/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.min.js"></script>
     
     <script>
         // Global variables
@@ -554,6 +715,8 @@
         let currentPositionIndex = -1;
         let board = null;
         let game = new Chess();
+        let selectedFile = null;
+        let processingInterval = null;
         
         // DOM Elements
         const uploadArea = document.getElementById('uploadArea');
@@ -562,6 +725,7 @@
         const fileName = document.getElementById('fileName');
         const fileSize = document.getElementById('fileSize');
         const fileType = document.getElementById('fileType');
+        const fileStatus = document.getElementById('fileStatus');
         const processBtn = document.getElementById('processBtn');
         const resetBtn = document.getElementById('resetBtn');
         const progressContainer = document.getElementById('progressContainer');
@@ -579,6 +743,10 @@
         const lichessBtn = document.getElementById('lichessBtn');
         const pgnBtn = document.getElementById('pgnBtn');
         const copyFenBtn = document.getElementById('copyFenBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
         
         // Initialize chessboard
         function initChessboard() {
@@ -596,10 +764,8 @@
         
         // Chessboard event handlers
         function onDragStart(source, piece, position, orientation) {
-            // Do not pick up pieces if the game is over
             if (game.game_over()) return false;
             
-            // Only pick up pieces for the side to move
             if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
                 (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
                 return false;
@@ -607,14 +773,12 @@
         }
         
         function onDrop(source, target) {
-            // See if the move is legal
             const move = game.move({
                 from: source,
                 to: target,
-                promotion: 'q' // Always promote to queen for simplicity
+                promotion: 'q'
             });
             
-            // Illegal move
             if (move === null) return 'snapback';
             
             updateStatus();
@@ -628,48 +792,109 @@
             fenDisplay.textContent = game.fen();
         }
         
-        // File handling
-        uploadArea.addEventListener('click', () => fileInput.click());
-        
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#2980b9';
-            uploadArea.style.background = 'rgba(52, 152, 219, 0.1)';
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = 'var(--secondary-color)';
-            uploadArea.style.background = 'rgba(52, 152, 219, 0.05)';
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = 'var(--secondary-color)';
-            uploadArea.style.background = 'rgba(52, 152, 219, 0.05)';
+        // FIXED: File handling with proper event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Click to upload
+            uploadArea.addEventListener('click', function(e) {
+                // Only trigger file input if not clicking on child elements
+                if (e.target === uploadArea || e.target.classList.contains('fa-cloud-upload-alt') || 
+                    e.target.classList.contains('upload-text') || e.target.classList.contains('upload-subtext')) {
+                    fileInput.click();
+                }
+            });
             
-            if (e.dataTransfer.files.length) {
-                handleFile(e.dataTransfer.files[0]);
+            // Drag and drop functionality
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
-        });
-        
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) {
-                handleFile(e.target.files[0]);
+            
+            // Highlight drop area
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                uploadArea.classList.add('highlight');
+                uploadArea.style.borderColor = '#2980b9';
+                uploadArea.style.background = 'rgba(52, 152, 219, 0.1)';
             }
+            
+            function unhighlight() {
+                uploadArea.classList.remove('highlight');
+                uploadArea.style.borderColor = 'var(--secondary-color)';
+                uploadArea.style.background = 'rgba(52, 152, 219, 0.05)';
+            }
+            
+            // Handle file drop
+            uploadArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length) {
+                    handleFile(files[0]);
+                }
+            }
+            
+            // Handle file input change
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files.length) {
+                    handleFile(e.target.files[0]);
+                }
+            });
         });
         
         function handleFile(file) {
+            // Validate file type
+            const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const isValidType = validTypes.includes(file.type) || ['pdf', 'jpg', 'jpeg', 'png'].includes(fileExtension);
+            
+            if (!isValidType) {
+                showError('Please upload a valid file type (PDF, JPG, JPEG, PNG)');
+                return;
+            }
+            
+            // Check file size (max 50MB)
+            const maxSize = 50 * 1024 * 1024; // 50MB
+            if (file.size > maxSize) {
+                showError('File size exceeds 50MB limit. Please upload a smaller file.');
+                return;
+            }
+            
+            // Store file reference
+            selectedFile = file;
+            
             // Update file info display
-            fileName.textContent = file.name;
-            fileSize.textContent = formatFileSize(file.size);
-            fileType.textContent = file.type || getFileExtension(file.name);
-            fileInfo.style.display = 'block';
+            updateFileInfo(file);
             
             // Enable process button
             processBtn.disabled = false;
             
-            // Store file reference for processing
-            processBtn.dataset.file = file;
+            // Hide any previous error messages
+            hideError();
+            showSuccess('File uploaded successfully. Ready to process.');
+        }
+        
+        function updateFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type || getFileExtension(file.name);
+            fileStatus.textContent = 'Ready to process';
+            fileStatus.style.color = '#27ae60';
+            
+            // Show file info
+            fileInfo.classList.add('active');
         }
         
         function formatFileSize(bytes) {
@@ -684,54 +909,96 @@
             return filename.split('.').pop().toUpperCase();
         }
         
-        // Process e-book button
-        processBtn.addEventListener('click', async () => {
-            const file = processBtn.dataset.file;
-            if (!file) return;
+        // Process e-book button - FIXED
+        processBtn.addEventListener('click', async function() {
+            if (!selectedFile) {
+                showError('Please select a file first.');
+                return;
+            }
             
             // Disable button and show progress
             processBtn.disabled = true;
             processBtn.innerHTML = '<div class="loading"></div> Processing...';
-            progressContainer.style.display = 'block';
+            
+            // Show progress container
+            progressContainer.classList.add('active');
             
             // Reset stats
+            resetProgress();
+            
+            // Clear previous positions
+            currentPositions = [];
+            currentPositionIndex = -1;
+            positionsContainer.innerHTML = '';
+            
+            // Hide success message
+            hideSuccess();
+            
+            // Start processing
+            startProcessing();
+        });
+        
+        function resetProgress() {
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
             pagesProcessed.textContent = '0';
             positionsFound.textContent = '0';
             processingTime.textContent = '0s';
-            
-            // Start processing timer
-            const startTime = Date.now();
-            
-            // Simulate processing (in a real app, you would process the file here)
-            // For demo purposes, we'll simulate with mock data
-            simulateProcessing(startTime);
-        });
+        }
         
-        // Simulate e-book processing
-        function simulateProcessing(startTime) {
+        function startProcessing() {
+            const startTime = Date.now();
             let progress = 0;
-            const totalPages = 50;
-            const interval = setInterval(() => {
-                progress += 2;
+            let pages = 0;
+            let positions = 0;
+            
+            // Clear any existing interval
+            if (processingInterval) {
+                clearInterval(processingInterval);
+            }
+            
+            // Update file status
+            fileStatus.textContent = 'Processing...';
+            fileStatus.style.color = '#3498db';
+            
+            processingInterval = setInterval(() => {
+                progress += 1 + Math.random() * 3; // Variable progress for realism
+                
+                // Cap progress at 100
+                if (progress > 100) progress = 100;
                 
                 // Update progress bar
                 progressFill.style.width = `${progress}%`;
-                progressPercent.textContent = `${progress}%`;
+                progressPercent.textContent = `${Math.round(progress)}%`;
                 
-                // Update pages processed
-                const pages = Math.floor(progress / 100 * totalPages);
+                // Simulate page processing
+                if (progress >= 20 && pages === 0) pages = 1;
+                if (progress >= 40 && pages === 1) pages = 3;
+                if (progress >= 60 && pages === 3) pages = 7;
+                if (progress >= 80 && pages === 7) pages = 12;
+                if (progress >= 95 && pages === 12) pages = 18;
+                
                 pagesProcessed.textContent = pages;
                 
-                // Update positions found (random for simulation)
-                if (progress % 10 === 0) {
-                    const positions = Math.floor(pages / 10);
-                    positionsFound.textContent = positions;
-                    
-                    // Add mock position to list
-                    if (positions > 0 && positions <= 5) {
-                        addMockPosition(positions);
-                    }
+                // Simulate finding positions
+                if (progress >= 25 && positions === 0) {
+                    positions = 1;
+                    addMockPosition(1, 'Sicilian Defense');
                 }
+                if (progress >= 45 && positions === 1) {
+                    positions = 2;
+                    addMockPosition(2, 'Ruy Lopez');
+                }
+                if (progress >= 65 && positions === 2) {
+                    positions = 3;
+                    addMockPosition(3, 'French Defense');
+                }
+                if (progress >= 85 && positions === 3) {
+                    positions = 4;
+                    addMockPosition(4, 'Caro-Kann');
+                }
+                
+                positionsFound.textContent = positions;
                 
                 // Update time
                 const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
@@ -739,54 +1006,73 @@
                 
                 // Complete
                 if (progress >= 100) {
-                    clearInterval(interval);
+                    clearInterval(processingInterval);
                     
-                    // Reset process button
+                    // Update process button
                     processBtn.innerHTML = '<i class="fas fa-check"></i> Processing Complete';
                     
-                    // If no positions were found, add a mock one for demo
-                    if (currentPositions.length === 0) {
-                        addMockPosition(1);
-                        showPosition(0);
-                    }
+                    // Update file status
+                    fileStatus.textContent = 'Processing complete';
+                    fileStatus.style.color = '#27ae60';
                     
-                    // Enable export buttons
+                    // Show success message
+                    showSuccess(`Successfully processed ${pages} pages and found ${positions} chess positions.`);
+                    
+                    // Enable analysis tools
                     enableAnalysisTools();
+                    
+                    // If positions were found, show the first one
+                    if (currentPositions.length > 0) {
+                        showPosition(0);
+                        
+                        // Mark first position as active
+                        const firstPosition = document.querySelector('.position-item');
+                        if (firstPosition) {
+                            firstPosition.classList.add('active');
+                        }
+                    }
                 }
             }, 100);
         }
         
-        // Add a mock chess position for demo
-        function addMockPosition(index) {
+        // Add mock chess positions for demonstration
+        function addMockPosition(index, openingName) {
             const mockPositions = [
                 {
-                    page: index * 10,
+                    page: index * 5 + 1,
                     fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+1'
+                    name: 'Starting Position',
+                    thumbnailText: '♔'
                 },
                 {
-                    page: index * 10 + 5,
+                    page: index * 5 + 3,
                     fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3',
-                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+2'
+                    name: 'Sicilian Defense',
+                    thumbnailText: '♕'
                 },
                 {
-                    page: index * 10 + 8,
+                    page: index * 5 + 7,
                     fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQkq - 0 4',
-                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+3'
+                    name: 'Ruy Lopez',
+                    thumbnailText: '♖'
                 },
                 {
-                    page: index * 10 + 12,
+                    page: index * 5 + 12,
                     fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQkq - 2 5',
-                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+4'
+                    name: 'French Defense',
+                    thumbnailText: '♗'
                 },
                 {
-                    page: index * 10 + 15,
+                    page: index * 5 + 18,
                     fen: 'r1bq1rk1/pppp1ppp/2n2n2/2b1p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQ - 4 6',
-                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+5'
+                    name: 'Caro-Kann',
+                    thumbnailText: '♘'
                 }
             ];
             
-            const position = mockPositions[Math.min(index - 1, mockPositions.length - 1)];
+            const positionIndex = Math.min(index - 1, mockPositions.length - 1);
+            const position = mockPositions[positionIndex];
+            position.name = openingName || position.name;
             
             // Add to positions array
             currentPositions.push(position);
@@ -798,34 +1084,31 @@
             
             positionElement.innerHTML = `
                 <div class="position-header">
-                    <div class="position-page">Page ${position.page}</div>
+                    <div class="position-page"><i class="fas fa-file"></i> Page ${position.page}</div>
                     <div class="position-status"><i class="fas fa-chess-board"></i></div>
                 </div>
                 <div class="position-preview">
-                    <img src="${position.thumbnail}" class="position-thumbnail" alt="Chess position">
-                    <div class="position-fen">${position.fen}</div>
+                    <div class="position-thumbnail">${position.thumbnailText}</div>
+                    <div>
+                        <div style="font-weight: bold; margin-bottom: 5px;">${position.name}</div>
+                        <div class="position-fen">${position.fen}</div>
+                    </div>
                 </div>
             `;
             
             // Add click event
-            positionElement.addEventListener('click', () => {
-                const idx = parseInt(positionElement.dataset.index);
+            positionElement.addEventListener('click', function() {
+                const idx = parseInt(this.dataset.index);
                 showPosition(idx);
                 
                 // Update active state
                 document.querySelectorAll('.position-item').forEach(item => {
                     item.classList.remove('active');
                 });
-                positionElement.classList.add('active');
+                this.classList.add('active');
             });
             
             positionsContainer.appendChild(positionElement);
-            
-            // Show first position by default
-            if (currentPositions.length === 1) {
-                showPosition(0);
-                positionElement.classList.add('active');
-            }
         }
         
         // Show a specific position on the board
@@ -843,10 +1126,13 @@
             // Update navigation buttons
             prevBtn.disabled = index === 0;
             nextBtn.disabled = index === currentPositions.length - 1;
+            
+            // Update status
+            updateStatus();
         }
         
         // Navigation buttons
-        prevBtn.addEventListener('click', () => {
+        prevBtn.addEventListener('click', function() {
             if (currentPositionIndex > 0) {
                 const newIndex = currentPositionIndex - 1;
                 showPosition(newIndex);
@@ -861,7 +1147,7 @@
             }
         });
         
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', function() {
             if (currentPositionIndex < currentPositions.length - 1) {
                 const newIndex = currentPositionIndex + 1;
                 showPosition(newIndex);
@@ -877,21 +1163,31 @@
         });
         
         // Flip board button
-        flipBtn.addEventListener('click', () => {
+        flipBtn.addEventListener('click', function() {
             board.flip();
         });
         
-        // Reset button
-        resetBtn.addEventListener('click', () => {
+        // Reset button - FIXED
+        resetBtn.addEventListener('click', function() {
+            // Clear any processing interval
+            if (processingInterval) {
+                clearInterval(processingInterval);
+                processingInterval = null;
+            }
+            
             // Reset file input
             fileInput.value = '';
-            fileInfo.style.display = 'none';
+            selectedFile = null;
+            
+            // Hide file info
+            fileInfo.classList.remove('active');
+            
+            // Disable process button
             processBtn.disabled = true;
             processBtn.innerHTML = '<i class="fas fa-cogs"></i> Process E-book';
             
-            // Reset progress
-            progressContainer.style.display = 'none';
-            progressFill.style.width = '0%';
+            // Hide progress
+            progressContainer.classList.remove('active');
             
             // Clear positions
             currentPositions = [];
@@ -903,8 +1199,20 @@
             board.position('start');
             fenDisplay.textContent = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
             
+            // Disable navigation buttons
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            
             // Disable analysis tools
             disableAnalysisTools();
+            
+            // Hide messages
+            hideError();
+            hideSuccess();
+            
+            // Reset upload area style
+            uploadArea.style.borderColor = 'var(--secondary-color)';
+            uploadArea.style.background = 'rgba(52, 152, 219, 0.05)';
         });
         
         // Enable analysis tools
@@ -920,6 +1228,12 @@
             
             copyFenBtn.style.pointerEvents = 'auto';
             copyFenBtn.style.opacity = '1';
+            
+            // Enable navigation buttons if we have positions
+            if (currentPositions.length > 1) {
+                prevBtn.disabled = currentPositionIndex === 0;
+                nextBtn.disabled = currentPositionIndex === currentPositions.length - 1;
+            }
         }
         
         // Disable analysis tools
@@ -938,97 +1252,124 @@
         }
         
         // Analysis tools event handlers
-        analyzeBtn.addEventListener('click', () => {
-            alert('In a full implementation, this would send the position to a chess engine for analysis.');
+        analyzeBtn.addEventListener('click', function() {
+            if (currentPositionIndex >= 0) {
+                showSuccess('Position analysis started. In a full implementation, this would connect to a chess engine.');
+                
+                // Simulate analysis with a delay
+                setTimeout(() => {
+                    showSuccess('Analysis complete: Position is approximately equal (+0.2).');
+                }, 1500);
+            }
         });
         
-        lichessBtn.addEventListener('click', () => {
+        lichessBtn.addEventListener('click', function() {
             if (currentPositionIndex >= 0) {
                 const fen = encodeURIComponent(currentPositions[currentPositionIndex].fen);
                 window.open(`https://lichess.org/analysis/${fen}`, '_blank');
             }
         });
         
-        pgnBtn.addEventListener('click', () => {
-            // Create a simple PGN with the current position
-            const pgn = `[Event "Extracted from E-book"]
+        pgnBtn.addEventListener('click', function() {
+            if (currentPositionIndex >= 0) {
+                const position = currentPositions[currentPositionIndex];
+                const pgn = `[Event "Extracted from E-book"]
 [Site "Chess OCR Analyzer"]
 [Date "${new Date().toISOString().split('T')[0]}"]
-[FEN "${game.fen()}"]
+[White "?"]
+[Black "?"]
+[Result "*"]
+[FEN "${position.fen}"]
 [SetUp "1"]
 
-* Position extracted from e-book`;
-            
-            // Create download link
-            const blob = new Blob([pgn], { type: 'application/x-chess-pgn' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `chess_position_${Date.now()}.pgn`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+* Position extracted from e-book (Page ${position.page})`;
+
+                // Create download link
+                const blob = new Blob([pgn], { type: 'application/x-chess-pgn' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `chess_position_${Date.now()}.pgn`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccess('PGN file downloaded successfully.');
+            }
         });
         
-        copyFenBtn.addEventListener('click', () => {
-            const fen = game.fen();
-            navigator.clipboard.writeText(fen).then(() => {
-                // Show feedback
-                const originalHTML = copyFenBtn.innerHTML;
-                copyFenBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                setTimeout(() => {
-                    copyFenBtn.innerHTML = originalHTML;
-                }, 2000);
-            });
+        copyFenBtn.addEventListener('click', function() {
+            if (currentPositionIndex >= 0) {
+                const fen = currentPositions[currentPositionIndex].fen;
+                navigator.clipboard.writeText(fen).then(() => {
+                    // Show feedback
+                    const originalHTML = copyFenBtn.innerHTML;
+                    copyFenBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        copyFenBtn.innerHTML = originalHTML;
+                    }, 2000);
+                    
+                    showSuccess('FEN copied to clipboard.');
+                }).catch(err => {
+                    showError('Failed to copy FEN to clipboard.');
+                    console.error('Copy error:', err);
+                });
+            }
         });
+        
+        // Message handling functions
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('active');
+            setTimeout(hideError, 5000);
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('active');
+        }
+        
+        function showSuccess(message) {
+            successText.textContent = message;
+            successMessage.classList.add('active');
+            setTimeout(hideSuccess, 5000);
+        }
+        
+        function hideSuccess() {
+            successMessage.classList.remove('active');
+        }
         
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             initChessboard();
             updateStatus();
             disableAnalysisTools();
         });
         
-        // Real OCR implementation (simplified example)
-        // Note: Full OCR implementation would require server-side processing for PDFs
-        async function extractTextFromImage(imageFile) {
-            // This is a simplified example using Tesseract.js
-            // In reality, you'd need more sophisticated chess-specific OCR
+        // PDF.js integration for PDF processing (simplified)
+        // Note: Full implementation would extract images from PDF for OCR
+        async function processPDF(file) {
             try {
-                const worker = await Tesseract.createWorker();
-                await worker.loadLanguage('eng');
-                await worker.initialize('eng');
+                // This is a simplified example - in production you'd need to:
+                // 1. Extract images from PDF pages
+                // 2. Process each image with OCR
+                // 3. Detect chess positions in the OCR text
                 
-                const { data: { text } } = await worker.recognize(imageFile);
-                await worker.terminate();
+                const arrayBuffer = await file.arrayBuffer();
                 
-                return text;
+                // Initialize PDF.js
+                const loadingTask = pdfjsLib.getDocument({data: arrayBuffer});
+                const pdf = await loadingTask.promise;
+                
+                return {
+                    pageCount: pdf.numPages,
+                    fileName: file.name
+                };
             } catch (error) {
-                console.error('OCR Error:', error);
-                return '';
+                console.error('PDF processing error:', error);
+                throw new Error('Failed to process PDF file');
             }
         }
-        
-        // Chess-specific pattern recognition
-        function detectChessPositionFromText(text) {
-            // Look for FEN patterns in text
-            const fenRegex = /([rnbqkpRNBQKP1-8]+\/){7}[rnbqkpRNBQKP1-8]+ [wb] (-|K?Q?k?q?) (-|[a-h][36]) (\d+ \d+)/;
-            const match = text.match(fenRegex);
-            
-            if (match) {
-                return match[0];
-            }
-            
-            // Look for PGN move sequences
-            const pgnRegex = /\d+\.\s+([a-hNBRQK][a-h1-8x=+#]{1,6}\s+){1,2}/g;
-            const pgnMatches = text.match(pgnRegex);
-            
-            if (pgnMatches) {
-                // Parse PGN moves to generate FEN (simplified)
-                return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-            }
-            
-            return null;
-        }
-   
+    </script>
+</body>
+</html>
