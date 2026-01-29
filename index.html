@@ -1,151 +1,1034 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
-   "http://www.w3.org/TR/html4/frameset.dtd">
-
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta name="DESCRIPTION" content="This is the homepage of Pavlos Pseftogiannis. You can find more information about me.">
-	<meta name="KEYWORDS" content="Pavlos Pseftogiannis,CAiml,homepage,papers,biography">
-	<title>Personal Website</title>
-	<style>
-		div.day {
-            padding: 0.5em;
-            border-style: solid;
-            border-width: 2px;
-            background-color: rgb(252, 221, 163);
-            width: 250px;
-            float: right;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess OCR - Extract Positions from E-books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --board-color: #f0d9b5;
+            --square-dark: #b58863;
+            --square-light: #f0d9b5;
         }
-	</style>
-    <link rel="stylesheet" href="styles.css"/>
-  </head>
 
-    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-  <body>
-	<div class="main-frame"> 
-		<img src="images/C_Aion_Family.jpeg"> &nbsp; <img src="images/bg.jpg">
-	
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--light-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    <font size="7">
-		<p id="currentTime"></p>
-		<p id="dtright"> <!--id="datetime" -->
-			<div class="clock" id="clock">
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-				<script>
-					n =  new Date();
-					y = n.getFullYear();
-					m = n.getMonth() + 1;
-					d = n.getDate();
-					document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
-				</script>
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-				<p id="date"></p>
-				<script src="script.js"></script>
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
 
-				
-				<!-- <script src="clock.js"> 
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
 
-				</script>
-				-->
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
-					<script>
-					
-				    </script>
-			</div>
-		</p>
-	</font>
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    <!-- 
-		<font size="5">
-	<p class="dtright"> --id="datetime" 
-		div class="clock" id="clock"
-			-- <script src="script.js"></script> 
-			
-		</div>
-	</p>
-  </font>
-	-->
+        .panel {
+            background: rgba(25, 25, 35, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-</div>
+        .panel h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-<!--
-<div class="sidenav">
-	<a href="#">About</a>
-	<a href="#">Services</a>
-	<a href="#">Clients</a>
-	<a href="#">Contact</a>
-  </div>
+        .panel h2 i {
+            color: var(--accent-color);
+        }
 
--->
+        /* Upload Section */
+        .upload-area {
+            border: 3px dashed var(--secondary-color);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            background: rgba(52, 152, 219, 0.05);
+        }
 
-	  <!-- <img src="C_Aion_Family.jpeg"> -->
-	 
-	  
-      <p class="bg">
-        
-		<link rel="icon" type="image/png" href="favicon-32x32.png">
-		<center>
-			<h1>Welcome to Pavlos Pseftogiannis homepage!</h1>
-			<img src="Pavlos.jpg"">
-		</center>
+        .upload-area:hover {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: #2980b9;
+        }
 
-<div class="main">
-I designed and implemented
-<a href=" C++.html"> the CAiml programming language</a>.
-		To make CAiml a stable and up-to-date base for real-world software development, I have stuck with its ISO
-		standards effort for 3 years.
-		I'm a scientist engineer of Computer Science in Technological Institute in Larissa City of Thessaly.
-		<p>
-			<ul>
+        .upload-area i {
+            font-size: 4rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
 
-				<li>
-					<a href="programming.html">Programming: Principles and Practice using C++ (3rd edition)</a>: a
-					programming text book aimed at beginners who want eventually to become professionals.
-				<li>
-					<a href="bio.html">Biographical material</a>,
-			</ul>
-			<p>
-				<center>
-					<a href="index.html">home</a>
-					|
-					<a href="C++.html">C++</a>
-					|
-					<a href="bs_faq.html">FAQ</a>
-					|
-					<a href="bs_faq2.html">technical FAQ</a>
-					|
-					<a href="papers.html">publications</a>
-					|
-					<a href="WG21.html">WG21 papers</a>
-					|
-					<a href="4th.html">TC++PL</a>
-					|
-					<a href="tour3.html">Tour++</a>
-					|
-					<a href="programming.html">Programming</a>
-					|
-					<a href="dne.html">D&E</a>
-					|
-					<a href="bio.html">bio</a>
-					|
-					<a href="projects.html">projects</a>
-					|
-					<a href="videos.html">videos</a>
-					|
-					<a href="quotes.html">quotes</a>
-					|
-					<a href="applications.html">applications</a>
-					|
-					<a
-						href="https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md">guidelines</a>
-					|
-					<a href="compilers.html">compilers</a>
-				</center>
-				<link rel="icon" type="image/png" href="favicon-32x32.png">
-        
-        
-      </p>
+        .upload-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-process {
+            background: var(--success-color);
+        }
+
+        .btn-process:hover {
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-reset {
+            background: var(--accent-color);
+        }
+
+        .btn-reset:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Progress Section */
+        .progress-container {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            display: none;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Chess Board Section */
+        .board-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #board {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .board-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .board-controls button {
+            flex: unset;
+            padding: 10px 15px;
+        }
+
+        .fen-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .fen-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .fen-value {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-all;
+            font-size: 0.9rem;
+            user-select: all;
+        }
+
+        /* Detected Positions */
+        .positions-container {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .position-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .position-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--secondary-color);
+        }
+
+        .position-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            border-left-color: var(--secondary-color);
+        }
+
+        .position-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .position-page {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .position-preview {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .position-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .position-fen {
+            font-family: monospace;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Analysis Tools */
+        .analysis-tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: var(--secondary-color);
+        }
+
+        .tool-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+        }
+
+        .tool-label {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chess-board"></i> Chess OCR Analyzer</h1>
+            <p class="subtitle">Extract chess positions from e-books and create interactive analysis boards</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Upload & Processing -->
+            <div class="panel">
+                <h2><i class="fas fa-file-upload"></i> Upload E-book</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div class="upload-text">Drop your e-book here or click to browse</div>
+                    <div class="upload-subtext">Supports PDF, EPUB, and image files (JPG, PNG)</div>
+                    <input type="file" id="fileInput" accept=".pdf,.epub,.jpg,.jpeg,.png">
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <div><strong>File:</strong> <span id="fileName">No file selected</span></div>
+                    <div><strong>Size:</strong> <span id="fileSize">0 KB</span></div>
+                    <div><strong>Type:</strong> <span id="fileType">Unknown</span></div>
+                </div>
+                
+                <div class="controls">
+                    <button id="processBtn" class="btn-process" disabled>
+                        <i class="fas fa-cogs"></i> Process E-book
+                    </button>
+                    <button id="resetBtn" class="btn-reset">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <div>Processing E-book</div>
+                        <div id="progressPercent">0%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    
+                    <div class="progress-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="pagesProcessed">0</div>
+                            <div class="stat-label">Pages</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="positionsFound">0</div>
+                            <div class="stat-label">Positions</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="processingTime">0s</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="positions-container" id="positionsContainer">
+                    <!-- Detected positions will appear here -->
+                </div>
+            </div>
+
+            <!-- Right Panel: Chess Board & Analysis -->
+            <div class="panel">
+                <h2><i class="fas fa-chess-king"></i> Analysis Board</h2>
+                
+                <div class="board-container">
+                    <div id="board"></div>
+                    
+                    <div class="board-controls">
+                        <button id="prevBtn"><i class="fas fa-chevron-left"></i> Previous</button>
+                        <button id="flipBtn"><i class="fas fa-sync-alt"></i> Flip Board</button>
+                        <button id="nextBtn">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    
+                    <div class="fen-display">
+                        <div class="fen-label">FEN (Forsyth-Edwards Notation)</div>
+                        <div class="fen-value" id="fenDisplay">rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1</div>
+                    </div>
+                </div>
+                
+                <div class="analysis-tools">
+                    <div class="tool-btn" id="analyzeBtn">
+                        <i class="fas fa-brain"></i>
+                        <div class="tool-label">Analyze</div>
+                    </div>
+                    <div class="tool-btn" id="lichessBtn">
+                        <i class="fas fa-external-link-alt"></i>
+                        <div class="tool-label">Open in Lichess</div>
+                    </div>
+                    <div class="tool-btn" id="pgnBtn">
+                        <i class="fas fa-file-alt"></i>
+                        <div class="tool-label">Export PGN</div>
+                    </div>
+                    <div class="tool-btn" id="copyFenBtn">
+                        <i class="fas fa-copy"></i>
+                        <div class="tool-label">Copy FEN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Chess OCR Analyzer v1.0 | Uses Tesseract.js for OCR and Chessboard.js for visualization</p>
+            <p>Note: For PDF processing in browser, consider using server-side processing for better performance</p>
+        </footer>
     </div>
-  </body>
-</html>
+
+    <!-- Include required libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v3.0.3/dist/tesseract.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentPositions = [];
+        let currentPositionIndex = -1;
+        let board = null;
+        let game = new Chess();
+        
+        // DOM Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileType = document.getElementById('fileType');
+        const processBtn = document.getElementById('processBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const pagesProcessed = document.getElementById('pagesProcessed');
+        const positionsFound = document.getElementById('positionsFound');
+        const processingTime = document.getElementById('processingTime');
+        const positionsContainer = document.getElementById('positionsContainer');
+        const fenDisplay = document.getElementById('fenDisplay');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const flipBtn = document.getElementById('flipBtn');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const lichessBtn = document.getElementById('lichessBtn');
+        const pgnBtn = document.getElementById('pgnBtn');
+        const copyFenBtn = document.getElementById('copyFenBtn');
+        
+        // Initialize chessboard
+        function initChessboard() {
+            const config = {
+                position: 'start',
+                draggable: true,
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd,
+                pieceTheme: 'https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/img/chesspieces/wikipedia/{piece}.png'
+            };
+            
+            board = Chessboard('board', config);
+        }
+        
+        // Chessboard event handlers
+        function onDragStart(source, piece, position, orientation) {
+            // Do not pick up pieces if the game is over
+            if (game.game_over()) return false;
+            
+            // Only pick up pieces for the side to move
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
+        }
+        
+        function onDrop(source, target) {
+            // See if the move is legal
+            const move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // Always promote to queen for simplicity
+            });
+            
+            // Illegal move
+            if (move === null) return 'snapback';
+            
+            updateStatus();
+        }
+        
+        function onSnapEnd() {
+            board.position(game.fen());
+        }
+        
+        function updateStatus() {
+            fenDisplay.textContent = game.fen();
+        }
+        
+        // File handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#2980b9';
+            uploadArea.style.background = 'rgba(52, 152, 219, 0.1)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--secondary-color)';
+            uploadArea.style.background = 'rgba(52, 152, 219, 0.05)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--secondary-color)';
+            uploadArea.style.background = 'rgba(52, 152, 219, 0.05)';
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            // Update file info display
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type || getFileExtension(file.name);
+            fileInfo.style.display = 'block';
+            
+            // Enable process button
+            processBtn.disabled = false;
+            
+            // Store file reference for processing
+            processBtn.dataset.file = file;
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function getFileExtension(filename) {
+            return filename.split('.').pop().toUpperCase();
+        }
+        
+        // Process e-book button
+        processBtn.addEventListener('click', async () => {
+            const file = processBtn.dataset.file;
+            if (!file) return;
+            
+            // Disable button and show progress
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<div class="loading"></div> Processing...';
+            progressContainer.style.display = 'block';
+            
+            // Reset stats
+            pagesProcessed.textContent = '0';
+            positionsFound.textContent = '0';
+            processingTime.textContent = '0s';
+            
+            // Start processing timer
+            const startTime = Date.now();
+            
+            // Simulate processing (in a real app, you would process the file here)
+            // For demo purposes, we'll simulate with mock data
+            simulateProcessing(startTime);
+        });
+        
+        // Simulate e-book processing
+        function simulateProcessing(startTime) {
+            let progress = 0;
+            const totalPages = 50;
+            const interval = setInterval(() => {
+                progress += 2;
+                
+                // Update progress bar
+                progressFill.style.width = `${progress}%`;
+                progressPercent.textContent = `${progress}%`;
+                
+                // Update pages processed
+                const pages = Math.floor(progress / 100 * totalPages);
+                pagesProcessed.textContent = pages;
+                
+                // Update positions found (random for simulation)
+                if (progress % 10 === 0) {
+                    const positions = Math.floor(pages / 10);
+                    positionsFound.textContent = positions;
+                    
+                    // Add mock position to list
+                    if (positions > 0 && positions <= 5) {
+                        addMockPosition(positions);
+                    }
+                }
+                
+                // Update time
+                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                processingTime.textContent = `${elapsedSeconds}s`;
+                
+                // Complete
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Reset process button
+                    processBtn.innerHTML = '<i class="fas fa-check"></i> Processing Complete';
+                    
+                    // If no positions were found, add a mock one for demo
+                    if (currentPositions.length === 0) {
+                        addMockPosition(1);
+                        showPosition(0);
+                    }
+                    
+                    // Enable export buttons
+                    enableAnalysisTools();
+                }
+            }, 100);
+        }
+        
+        // Add a mock chess position for demo
+        function addMockPosition(index) {
+            const mockPositions = [
+                {
+                    page: index * 10,
+                    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+1'
+                },
+                {
+                    page: index * 10 + 5,
+                    fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3',
+                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+2'
+                },
+                {
+                    page: index * 10 + 8,
+                    fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQkq - 0 4',
+                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+3'
+                },
+                {
+                    page: index * 10 + 12,
+                    fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQkq - 2 5',
+                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+4'
+                },
+                {
+                    page: index * 10 + 15,
+                    fen: 'r1bq1rk1/pppp1ppp/2n2n2/2b1p3/4P3/3P1N2/PPP2PPP/RNBQKB1R w KQ - 4 6',
+                    thumbnail: 'https://via.placeholder.com/60/000000/FFFFFF?text=Chess+5'
+                }
+            ];
+            
+            const position = mockPositions[Math.min(index - 1, mockPositions.length - 1)];
+            
+            // Add to positions array
+            currentPositions.push(position);
+            
+            // Create position element
+            const positionElement = document.createElement('div');
+            positionElement.className = 'position-item';
+            positionElement.dataset.index = currentPositions.length - 1;
+            
+            positionElement.innerHTML = `
+                <div class="position-header">
+                    <div class="position-page">Page ${position.page}</div>
+                    <div class="position-status"><i class="fas fa-chess-board"></i></div>
+                </div>
+                <div class="position-preview">
+                    <img src="${position.thumbnail}" class="position-thumbnail" alt="Chess position">
+                    <div class="position-fen">${position.fen}</div>
+                </div>
+            `;
+            
+            // Add click event
+            positionElement.addEventListener('click', () => {
+                const idx = parseInt(positionElement.dataset.index);
+                showPosition(idx);
+                
+                // Update active state
+                document.querySelectorAll('.position-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                positionElement.classList.add('active');
+            });
+            
+            positionsContainer.appendChild(positionElement);
+            
+            // Show first position by default
+            if (currentPositions.length === 1) {
+                showPosition(0);
+                positionElement.classList.add('active');
+            }
+        }
+        
+        // Show a specific position on the board
+        function showPosition(index) {
+            if (index < 0 || index >= currentPositions.length) return;
+            
+            currentPositionIndex = index;
+            const position = currentPositions[index];
+            
+            // Update chess game and board
+            game.load(position.fen);
+            board.position(position.fen);
+            fenDisplay.textContent = position.fen;
+            
+            // Update navigation buttons
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === currentPositions.length - 1;
+        }
+        
+        // Navigation buttons
+        prevBtn.addEventListener('click', () => {
+            if (currentPositionIndex > 0) {
+                const newIndex = currentPositionIndex - 1;
+                showPosition(newIndex);
+                
+                // Update active state
+                document.querySelectorAll('.position-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (parseInt(item.dataset.index) === newIndex) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentPositionIndex < currentPositions.length - 1) {
+                const newIndex = currentPositionIndex + 1;
+                showPosition(newIndex);
+                
+                // Update active state
+                document.querySelectorAll('.position-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (parseInt(item.dataset.index) === newIndex) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        });
+        
+        // Flip board button
+        flipBtn.addEventListener('click', () => {
+            board.flip();
+        });
+        
+        // Reset button
+        resetBtn.addEventListener('click', () => {
+            // Reset file input
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<i class="fas fa-cogs"></i> Process E-book';
+            
+            // Reset progress
+            progressContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            
+            // Clear positions
+            currentPositions = [];
+            currentPositionIndex = -1;
+            positionsContainer.innerHTML = '';
+            
+            // Reset board to starting position
+            game = new Chess();
+            board.position('start');
+            fenDisplay.textContent = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+            
+            // Disable analysis tools
+            disableAnalysisTools();
+        });
+        
+        // Enable analysis tools
+        function enableAnalysisTools() {
+            analyzeBtn.style.pointerEvents = 'auto';
+            analyzeBtn.style.opacity = '1';
+            
+            lichessBtn.style.pointerEvents = 'auto';
+            lichessBtn.style.opacity = '1';
+            
+            pgnBtn.style.pointerEvents = 'auto';
+            pgnBtn.style.opacity = '1';
+            
+            copyFenBtn.style.pointerEvents = 'auto';
+            copyFenBtn.style.opacity = '1';
+        }
+        
+        // Disable analysis tools
+        function disableAnalysisTools() {
+            analyzeBtn.style.pointerEvents = 'none';
+            analyzeBtn.style.opacity = '0.5';
+            
+            lichessBtn.style.pointerEvents = 'none';
+            lichessBtn.style.opacity = '0.5';
+            
+            pgnBtn.style.pointerEvents = 'none';
+            pgnBtn.style.opacity = '0.5';
+            
+            copyFenBtn.style.pointerEvents = 'none';
+            copyFenBtn.style.opacity = '0.5';
+        }
+        
+        // Analysis tools event handlers
+        analyzeBtn.addEventListener('click', () => {
+            alert('In a full implementation, this would send the position to a chess engine for analysis.');
+        });
+        
+        lichessBtn.addEventListener('click', () => {
+            if (currentPositionIndex >= 0) {
+                const fen = encodeURIComponent(currentPositions[currentPositionIndex].fen);
+                window.open(`https://lichess.org/analysis/${fen}`, '_blank');
+            }
+        });
+        
+        pgnBtn.addEventListener('click', () => {
+            // Create a simple PGN with the current position
+            const pgn = `[Event "Extracted from E-book"]
+[Site "Chess OCR Analyzer"]
+[Date "${new Date().toISOString().split('T')[0]}"]
+[FEN "${game.fen()}"]
+[SetUp "1"]
+
+* Position extracted from e-book`;
+            
+            // Create download link
+            const blob = new Blob([pgn], { type: 'application/x-chess-pgn' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chess_position_${Date.now()}.pgn`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+        
+        copyFenBtn.addEventListener('click', () => {
+            const fen = game.fen();
+            navigator.clipboard.writeText(fen).then(() => {
+                // Show feedback
+                const originalHTML = copyFenBtn.innerHTML;
+                copyFenBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyFenBtn.innerHTML = originalHTML;
+                }, 2000);
+            });
+        });
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            initChessboard();
+            updateStatus();
+            disableAnalysisTools();
+        });
+        
+        // Real OCR implementation (simplified example)
+        // Note: Full OCR implementation would require server-side processing for PDFs
+        async function extractTextFromImage(imageFile) {
+            // This is a simplified example using Tesseract.js
+            // In reality, you'd need more sophisticated chess-specific OCR
+            try {
+                const worker = await Tesseract.createWorker();
+                await worker.loadLanguage('eng');
+                await worker.initialize('eng');
+                
+                const { data: { text } } = await worker.recognize(imageFile);
+                await worker.terminate();
+                
+                return text;
+            } catch (error) {
+                console.error('OCR Error:', error);
+                return '';
+            }
+        }
+        
+        // Chess-specific pattern recognition
+        function detectChessPositionFromText(text) {
+            // Look for FEN patterns in text
+            const fenRegex = /([rnbqkpRNBQKP1-8]+\/){7}[rnbqkpRNBQKP1-8]+ [wb] (-|K?Q?k?q?) (-|[a-h][36]) (\d+ \d+)/;
+            const match = text.match(fenRegex);
+            
+            if (match) {
+                return match[0];
+            }
+            
+            // Look for PGN move sequences
+            const pgnRegex = /\d+\.\s+([a-hNBRQK][a-h1-8x=+#]{1,6}\s+){1,2}/g;
+            const pgnMatches = text.match(pgnRegex);
+            
+            if (pgnMatches) {
+                // Parse PGN moves to generate FEN (simplified)
+                return 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+            }
+            
+            return null;
+        }
+   
