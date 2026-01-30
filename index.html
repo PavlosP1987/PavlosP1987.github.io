@@ -1,114 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Chess Board FEN Extractor</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .upload-area { 
-            border: 3px dashed #ccc; 
-            padding: 40px; 
-            text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
-        }
-        #preview { max-width: 100%; margin: 20px 0; }
-        #result { 
-            background: #f5f5f5; 
-            padding: 20px; 
-            margin: 20px 0;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Board OCR</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>Chess Board FEN Extractor</h1>
-        
-        <div class="upload-area" id="dropArea">
-            <p>Drag & drop chessboard image here</p>
-            <p>or click to select</p>
-            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        <header>
+            <h1><i class="fas fa-chess-board"></i> Chess Board OCR</h1>
+            <p>Upload a chessboard image and get the FEN notation automatically</p>
+        </header>
+
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="upload-area" id="dropArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Drag & Drop Chessboard Image</h3>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept="image/*" capture="environment">
+                    <p class="formats">Supported formats: JPG, PNG, WebP (Max 5MB)</p>
+                </div>
+                
+                <div class="preview-section" style="display: none;">
+                    <h3>Preview</h3>
+                    <div class="image-preview">
+                        <img id="previewImage" src="" alt="Chessboard preview">
+                        <div class="preview-controls">
+                            <button id="rotateLeft" class="btn-icon"><i class="fas fa-undo"></i></button>
+                            <button id="rotateRight" class="btn-icon"><i class="fas fa-redo"></i></button>
+                            <button id="cropBtn" class="btn-icon"><i class="fas fa-crop"></i></button>
+                            <button id="removeBtn" class="btn-icon"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button id="processBtn" class="btn-primary">
+                            <i class="fas fa-cogs"></i> Process Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section" style="display: none;">
+                <h3><i class="fas fa-chess"></i> OCR Results</h3>
+                
+                <div class="result-grid">
+                    <div class="result-card">
+                        <h4><i class="fas fa-list"></i> Detected Board</h4>
+                        <div id="boardVisualization" class="board-visual">
+                            <!-- Chessboard will be rendered here -->
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h4><i class="fas fa-code"></i> FEN Notation</h4>
+                        <div class="fen-container">
+                            <textarea id="fenOutput" readonly></textarea>
+                            <button id="copyFEN" class="btn-secondary">
+                                <i class="far fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        
+                        <div class="actions">
+                            <button id="validateBtn" class="btn-success">
+                                <i class="fas fa-check-circle"></i> Validate FEN
+                            </button>
+                            <button id="lichessBtn" class="btn-lichess">
+                                <i class="fas fa-external-link-alt"></i> Open in Lichess
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="debug-info">
+                    <h4><i class="fas fa-bug"></i> Processing Details</h4>
+                    <div id="debugOutput"></div>
+                </div>
+            </div>
         </div>
-        
-        <div id="previewContainer" style="display: none;">
-            <h3>Preview:</h3>
-            <img id="preview" src="" alt="Preview">
-        </div>
-        
-        <button onclick="processImage()" id="processBtn" disabled>Extract FEN</button>
-        
-        <div id="resultContainer" style="display: none;">
-            <h3>FEN Notation:</h3>
-            <div id="result"></div>
-            <button onclick="copyFEN()">Copy FEN</button>
-            <button onclick="openLichess()">Open in Lichess</button>
+
+        <div class="tips">
+            <h4><i class="fas fa-lightbulb"></i> Tips for Best Results</h4>
+            <ul>
+                <li>Use good lighting and avoid shadows on the board</li>
+                <li>Take picture from directly above the board</li>
+                <li>Make sure all 64 squares are visible</li>
+                <li>Use standard Staunton chess pieces</li>
+                <li>Clear background works best</li>
+            </ul>
         </div>
     </div>
-    
-    <script>
-        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-        document.getElementById('dropArea').addEventListener('click', () => document.getElementById('fileInput').click());
-        
-        let currentImage = null;
-        
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                currentImage = e.target.result;
-                document.getElementById('preview').src = currentImage;
-                document.getElementById('previewContainer').style.display = 'block';
-                document.getElementById('processBtn').disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        async function processImage() {
-            if (!currentImage) return;
-            
-            // Convert to blob
-            const blob = await fetch(currentImage).then(r => r.blob());
-            const formData = new FormData();
-            formData.append('image', blob, 'chessboard.jpg');
-            
-            document.getElementById('result').innerHTML = 'Processing...';
-            document.getElementById('resultContainer').style.display = 'block';
-            
-            // Send to processing endpoint
-            try {
-                // You need to implement this endpoint
-                const response = await fetch('/process-chessboard', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    document.getElementById('result').innerHTML = result.fen;
-                } else {
-                    document.getElementById('result').innerHTML = 'Error: ' + result.error;
-                }
-            } catch (error) {
-                document.getElementById('result').innerHTML = 'Error: ' + error.message;
-            }
-        }
-        
-        function copyFEN() {
-            const fen = document.getElementById('result').innerText;
-            navigator.clipboard.writeText(fen);
-            alert('FEN copied to clipboard!');
-        }
-        
-        function openLichess() {
-            const fen = encodeURIComponent(document.getElementById('result').innerText);
-            window.open(`https://lichess.org/editor/${fen}`, '_blank');
-        }
-    </script>
+
+    <div id="loadingOverlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing chessboard...</p>
+    </div>
+
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
