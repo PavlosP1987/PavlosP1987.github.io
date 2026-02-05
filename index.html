@@ -1,1068 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
+   "http://www.w3.org/TR/html4/frameset.dtd">
+
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess FEN Extractor</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+	<meta name="DESCRIPTION" content="This is the homepage of Pavlos Pseftogiannis. You can find more information about me.">
+	<meta name="KEYWORDS" content="Pavlos Pseftogiannis,CAiml,homepage,papers,biography">
+	<title>Personal Website</title>
+	<style>
+		div.day {
+            padding: 0.5em;
+            border-style: solid;
+            border-width: 2px;
+            background-color: rgb(252, 221, 163);
+            width: 250px;
+            float: right;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-        
-        header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-        
-        header p {
-            opacity: 0.9;
-            font-size: 1rem;
-        }
-        
-        .main-content {
-            padding: 25px;
-        }
-        
-        .upload-section {
-            margin-bottom: 30px;
-        }
-        
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-            position: relative;
-        }
-        
-        .upload-area:hover {
-            background: #eef2ff;
-            border-color: #764ba2;
-        }
-        
-        .upload-icon {
-            font-size: 3rem;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-        
-        .upload-area h3 {
-            color: #2c3e50;
-            margin-bottom: 8px;
-            font-size: 1.3rem;
-        }
-        
-        #fileInput {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .formats {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 15px;
-        }
-        
-        .preview-section {
-            margin-top: 25px;
-            display: none;
-        }
-        
-        .image-preview {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        #previewImage {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: 2px solid #ddd;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-        }
-        
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #218838;
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-        
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-        
-        .results-section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-top: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .result-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .result-card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-            font-size: 1.2rem;
-        }
-        
-        #boardVisualization {
-            width: 100%;
-            height: 300px;
-            background: #f0f0f0;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        #boardCanvas {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .fen-container {
-            margin-bottom: 15px;
-        }
-        
-        #fenOutput {
-            width: 100%;
-            height: 120px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            resize: none;
-            background: white;
-            margin-bottom: 15px;
-        }
-        
-        .action-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .action-buttons button {
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        .debug-section {
-            margin-top: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .debug-section h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        
-        #debugOutput {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            color: #333;
-            white-space: pre-wrap;
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .manual-entry {
-            margin-top: 25px;
-            padding: 20px;
-            background: #e8f4fd;
-            border-radius: 10px;
-            border-left: 4px solid #2196F3;
-        }
-        
-        .manual-entry h3 {
-            color: #1565C0;
-            margin-bottom: 15px;
-        }
-        
-        .square-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 2px;
-            margin: 15px 0;
-            max-width: 400px;
-        }
-        
-        .square {
-            aspect-ratio: 1;
-            border: 1px solid #999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            cursor: pointer;
-            user-select: none;
-        }
-        
-        .square.light { background-color: #f0d9b5; }
-        .square.dark { background-color: #b58863; }
-        
-        .piece-selector {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 5px;
-            margin: 15px 0;
-        }
-        
-        .piece-option {
-            padding: 8px;
-            text-align: center;
-            border: 2px solid transparent;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        
-        .piece-option:hover {
-            background: #e0e0e0;
-        }
-        
-        .piece-option.selected {
-            border-color: #2196F3;
-            background: #bbdefb;
-        }
-        
-        #loadingOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            color: white;
-        }
-        
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .tips {
-            background: linear-gradient(135deg, #fff9c4 0%, #ffecb3 100%);
-            padding: 20px;
-            margin-top: 25px;
-            border-radius: 15px;
-            border-left: 5px solid #ffb300;
-        }
-        
-        .tips h3 {
-            color: #5d4037;
-            margin-bottom: 12px;
-        }
-        
-        .tips ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-        
-        .tips li {
-            padding: 6px 0;
-            color: #5d4037;
-            position: relative;
-        }
-        
-        .tips li:before {
-            content: "✓";
-            color: #4caf50;
-            font-weight: bold;
-            position: absolute;
-            left: -20px;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>🎯 Chess FEN Extractor</h1>
-            <p>Upload a chessboard image and extract FEN notation in your browser</p>
-        </header>
-        
-        <div class="main-content">
-            <!-- Upload Section -->
-            <div class="upload-section">
-                <div class="upload-area" id="dropArea">
-                    <div class="upload-icon">📁</div>
-                    <h3>Drop Chessboard Image Here</h3>
-                    <p>or click to select file</p>
-                    <input type="file" id="fileInput" accept="image/*">
-                    <p class="formats">Supported: JPG, PNG, WebP (Max: 5MB)</p>
-                </div>
-                
-                <div class="alert" id="errorAlert"></div>
-                
-                <div class="preview-section" id="previewSection">
-                    <h3>Image Preview</h3>
-                    <div class="image-preview">
-                        <img id="previewImage" src="" alt="Preview">
-                    </div>
-                    
-                    <div class="controls">
-                        <button id="processBtn" class="btn-primary">
-                            🔍 Extract FEN
-                        </button>
-                        <button id="clearBtn" class="btn-secondary">
-                            ❌ Clear
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Results Section -->
-            <div class="results-section" id="resultsSection">
-                <h2>🎯 Extraction Results</h2>
-                
-                <div class="result-grid">
-                    <!-- Board Visualization -->
-                    <div class="result-card">
-                        <h3>Detected Board</h3>
-                        <div id="boardVisualization">
-                            <canvas id="boardCanvas"></canvas>
-                        </div>
-                        <div class="action-buttons">
-                            <button id="saveImageBtn" class="btn-warning">
-                                💾 Save Board Image
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- FEN Output -->
-                    <div class="result-card">
-                        <h3>FEN Notation</h3>
-                        <div class="fen-container">
-                            <textarea id="fenOutput" readonly placeholder="FEN will appear here..."></textarea>
-                        </div>
-                        <div class="action-buttons">
-                            <button id="copyFENBtn" class="btn-secondary">
-                                📋 Copy FEN
-                            </button>
-                            <button id="saveFENBtn" class="btn-success">
-                                💾 Save to File
-                            </button>
-                            <button id="openLichessBtn" class="btn-primary">
-                                ♞ Open in Lichess
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Debug Info -->
-                <div class="debug-section">
-                    <h3>Processing Details</h3>
-                    <div id="debugOutput">Waiting for image...</div>
-                </div>
-                
-                <!-- Manual Entry -->
-                <div class="manual-entry">
-                    <h3>⚠️ Couldn't detect? Set up manually:</h3>
-                    <div id="manualBoard" class="square-grid"></div>
-                    <div class="piece-selector" id="pieceSelector"></div>
-                    <button id="generateManualFENBtn" class="btn-primary">
-                        Generate FEN from Manual Setup
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Tips -->
-            <div class="tips">
-                <h3>💡 Tips for Best Results</h3>
-                <ul>
-                    <li>Use good lighting - avoid shadows on the board</li>
-                    <li>Take picture from directly above the board</li>
-                    <li>Ensure all 64 squares are clearly visible</li>
-                    <li>Use standard Staunton chess pieces</li>
-                    <li>Crop image to show only the chessboard</li>
-                </ul>
-            </div>
-        </div>
-        
-        <footer>
-            <p>Chess FEN Extractor | Works entirely in your browser | No data uploaded</p>
-        </footer>
+	</style>
+    <link rel="stylesheet" href="styles.css"/>
+  </head>
+
+    
+
+  <body>
+	<div class="main-frame"> 
+		<img src="images/C_Aion_Family.jpeg"> &nbsp; <img src="images/bg.jpg">
+	
+
+    <font size="7">
+		<p id="currentTime"></p>
+		<p id="dtright"> <!--id="datetime" -->
+			<div class="clock" id="clock">
+
+				<script>
+					n =  new Date();
+					y = n.getFullYear();
+					m = n.getMonth() + 1;
+					d = n.getDate();
+					document.getElementById("date").innerHTML = m + "/" + d + "/" + y;
+				</script>
+
+				<p id="date"></p>
+				<script src="script.js"></script>
+
+				
+				<!-- <script src="clock.js"> 
+
+				</script>
+				-->
+
+					<script>
+					
+				    </script>
+			</div>
+		</p>
+	</font>
+
+    <!-- 
+		<font size="5">
+	<p class="dtright"> --id="datetime" 
+		div class="clock" id="clock"
+			-- <script src="script.js"></script> 
+			
+		</div>
+	</p>
+  </font>
+	-->
+
+</div>
+
+<!--
+<div class="sidenav">
+	<a href="#">About</a>
+	<a href="#">Services</a>
+	<a href="#">Clients</a>
+	<a href="#">Contact</a>
+  </div>
+
+-->
+
+	  <!-- <img src="C_Aion_Family.jpeg"> -->
+	 
+	  
+      <p class="bg">
+        
+		<link rel="icon" type="image/png" href="favicon-32x32.png">
+		<center>
+			<h1>Welcome to Pavlos Pseftogiannis homepage!</h1>
+			<img src="Pavlos.jpg"">
+		</center>
+
+<div class="main">
+I designed and implemented
+<a href=" C++.html"> the CAiml programming language</a>.
+		To make CAiml a stable and up-to-date base for real-world software development, I have stuck with its ISO
+		standards effort for 3 years.
+		I'm a scientist engineer of Computer Science in Technological Institute in Larissa City of Thessaly.
+		<p>
+			<ul>
+
+				<li>
+					<a href="programming.html">Programming: Principles and Practice using C++ (3rd edition)</a>: a
+					programming text book aimed at beginners who want eventually to become professionals.
+				<li>
+					<a href="bio.html">Biographical material</a>,
+			</ul>
+			<p>
+				<center>
+					<a href="index.html">home</a>
+					|
+					<a href="C++.html">C++</a>
+					|
+					<a href="bs_faq.html">FAQ</a>
+					|
+					<a href="bs_faq2.html">technical FAQ</a>
+					|
+					<a href="papers.html">publications</a>
+					|
+					<a href="WG21.html">WG21 papers</a>
+					|
+					<a href="4th.html">TC++PL</a>
+					|
+					<a href="tour3.html">Tour++</a>
+					|
+					<a href="programming.html">Programming</a>
+					|
+					<a href="dne.html">D&E</a>
+					|
+					<a href="bio.html">bio</a>
+					|
+					<a href="projects.html">projects</a>
+					|
+					<a href="videos.html">videos</a>
+					|
+					<a href="quotes.html">quotes</a>
+					|
+					<a href="applications.html">applications</a>
+					|
+					<a
+						href="https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md">guidelines</a>
+					|
+					<a href="compilers.html">compilers</a>
+				</center>
+				<link rel="icon" type="image/png" href="favicon-32x32.png">
+        
+        
+      </p>
     </div>
-    
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay">
-        <div class="spinner"></div>
-        <p id="loadingText">Processing chessboard...</p>
-    </div>
-    
-    <!-- Hidden canvas for image processing -->
-    <canvas id="processingCanvas" style="display: none;"></canvas>
-    
-    <script>
-        class ChessFENExtractor {
-            constructor() {
-                this.image = null;
-                this.fen = '';
-                this.pieces = [];
-                this.selectedPiece = 'K';
-                this.manualBoard = [];
-                this.init();
-            }
-            
-            init() {
-                this.setupEventListeners();
-                this.initManualBoard();
-                this.initPieceSelector();
-            }
-            
-            setupEventListeners() {
-                // File upload
-                const fileInput = document.getElementById('fileInput');
-                const dropArea = document.getElementById('dropArea');
-                
-                fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
-                
-                // Drag and drop
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
-                });
-                
-                ['dragenter', 'dragover'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, () => {
-                        dropArea.style.background = '#eef2ff';
-                        dropArea.style.borderColor = '#764ba2';
-                    });
-                });
-                
-                ['dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, () => {
-                        dropArea.style.background = '#f8f9fa';
-                        dropArea.style.borderColor = '#667eea';
-                    });
-                });
-                
-                dropArea.addEventListener('drop', (e) => {
-                    const files = e.dataTransfer.files;
-                    this.handleFiles(files);
-                });
-                
-                // Buttons
-                document.getElementById('processBtn').addEventListener('click', () => this.processImage());
-                document.getElementById('clearBtn').addEventListener('click', () => this.clear());
-                document.getElementById('copyFENBtn').addEventListener('click', () => this.copyFEN());
-                document.getElementById('saveFENBtn').addEventListener('click', () => this.saveFEN());
-                document.getElementById('saveImageBtn').addEventListener('click', () => this.saveBoardImage());
-                document.getElementById('openLichessBtn').addEventListener('click', () => this.openInLichess());
-                document.getElementById('generateManualFENBtn').addEventListener('click', () => this.generateManualFEN());
-            }
-            
-            handleFileSelect(e) {
-                const files = e.target.files;
-                this.handleFiles(files);
-            }
-            
-            handleFiles(files) {
-                if (!files || files.length === 0) return;
-                
-                const file = files[0];
-                
-                // Validate file
-                if (!file.type.startsWith('image/')) {
-                    this.showError('Please select an image file');
-                    return;
-                }
-                
-                if (file.size > 5 * 1024 * 1024) {
-                    this.showError('File size must be less than 5MB');
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.image = new Image();
-                    this.image.onload = () => {
-                        this.showPreview();
-                    };
-                    this.image.onerror = () => {
-                        this.showError('Failed to load image');
-                    };
-                    this.image.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-            
-            showPreview() {
-                const previewSection = document.getElementById('previewSection');
-                const previewImage = document.getElementById('previewImage');
-                
-                previewImage.src = this.image.src;
-                previewSection.style.display = 'block';
-                
-                // Scroll to preview
-                previewSection.scrollIntoView({ behavior: 'smooth' });
-                
-                // Clear any previous results
-                document.getElementById('resultsSection').style.display = 'none';
-                this.hideError();
-            }
-            
-            showLoading(show, text = 'Processing chessboard...') {
-                const overlay = document.getElementById('loadingOverlay');
-                const loadingText = document.getElementById('loadingText');
-                
-                loadingText.textContent = text;
-                overlay.style.display = show ? 'flex' : 'none';
-            }
-            
-            showError(message) {
-                const errorAlert = document.getElementById('errorAlert');
-                errorAlert.textContent = message;
-                errorAlert.className = 'alert alert-error';
-                errorAlert.style.display = 'block';
-            }
-            
-            hideError() {
-                const errorAlert = document.getElementById('errorAlert');
-                errorAlert.style.display = 'none';
-            }
-            
-            async processImage() {
-                if (!this.image) {
-                    this.showError('Please select an image first');
-                    return;
-                }
-                
-                this.showLoading(true);
-                
-                try {
-                    // Process image using computer vision
-                    const result = await this.analyzeChessboard();
-                    
-                    if (result.success) {
-                        this.displayResults(result);
-                    } else {
-                        throw new Error(result.error || 'Failed to detect chessboard');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    this.showError('Failed to process image: ' + error.message);
-                    
-                    // Show manual entry as fallback
-                    document.getElementById('resultsSection').style.display = 'block';
-                } finally {
-                    this.showLoading(false);
-                }
-            }
-            
-            async analyzeChessboard() {
-                // This is a simplified analysis
-                // In a real implementation, you would use TensorFlow.js or OpenCV.js
-                
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        // For demo purposes, return a sample position
-                        // In production, implement actual computer vision here
-                        const fen = this.generateSampleFEN();
-                        const pieces = this.parseFEN(fen);
-                        
-                        resolve({
-                            success: true,
-                            fen: fen,
-                            pieces: pieces,
-                            confidence: 85,
-                            message: 'Analysis complete (demo mode)'
-                        });
-                    }, 2000);
-                });
-            }
-            
-            generateSampleFEN() {
-                // Return a random chess position for demo
-                // In production, this would be the actual detected position
-                const samplePositions = [
-                    'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', // Start
-                    'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', // Italian
-                    'r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P4/2PBPN2/PP1N1PPP/R1BQK2R b KQ - 0 8' // Complex
-                ];
-                
-                return samplePositions[Math.floor(Math.random() * samplePositions.length)];
-            }
-            
-            parseFEN(fen) {
-                // Convert FEN to piece array
-                const boardPart = fen.split(' ')[0];
-                const rows = boardPart.split('/');
-                const pieces = [];
-                
-                for (let row = 0; row < 8; row++) {
-                    pieces[row] = [];
-                    let col = 0;
-                    
-                    for (const char of rows[row]) {
-                        if (isNaN(char)) {
-                            pieces[row][col] = char;
-                            col++;
-                        } else {
-                            const emptySquares = parseInt(char);
-                            for (let i = 0; i < emptySquares; i++) {
-                                pieces[row][col] = '';
-                                col++;
-                            }
-                        }
-                    }
-                }
-                
-                return pieces;
-            }
-            
-            displayResults(result) {
-                this.fen = result.fen;
-                this.pieces = result.pieces;
-                
-                const resultsSection = document.getElementById('resultsSection');
-                const fenOutput = document.getElementById('fenOutput');
-                const debugOutput = document.getElementById('debugOutput');
-                
-                // Show results
-                resultsSection.style.display = 'block';
-                fenOutput.value = this.fen;
-                
-                // Update debug info
-                debugOutput.innerHTML = `
-                    Status: ${result.message}<br>
-                    Confidence: ${result.confidence}%<br>
-                    FEN Length: ${this.fen.length} characters<br>
-                    Timestamp: ${new Date().toLocaleTimeString()}
-                `;
-                
-                // Render chessboard
-                this.renderChessboard();
-                
-                // Scroll to results
-                resultsSection.scrollIntoView({ behavior: 'smooth' });
-            }
-            
-            renderChessboard() {
-                const canvas = document.getElementById('boardCanvas');
-                const ctx = canvas.getContext('2d');
-                const size = Math.min(canvas.parentElement.clientWidth, canvas.parentElement.clientHeight);
-                
-                canvas.width = size;
-                canvas.height = size;
-                
-                const squareSize = size / 8;
-                
-                // Draw squares
-                for (let row = 0; row < 8; row++) {
-                    for (let col = 0; col < 8; col++) {
-                        const isLight = (row + col) % 2 === 0;
-                        
-                        ctx.fillStyle = isLight ? '#f0d9b5' : '#b58863';
-                        ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
-                        
-                        // Draw piece if present
-                        if (this.pieces[row] && this.pieces[row][col]) {
-                            const piece = this.pieces[row][col];
-                            this.drawPiece(ctx, piece, col * squareSize, row * squareSize, squareSize);
-                        }
-                    }
-                }
-                
-                // Draw coordinates
-                ctx.fillStyle = '#333';
-                ctx.font = `${squareSize * 0.15}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                // Files (a-h)
-                for (let col = 0; col < 8; col++) {
-                    ctx.fillText(
-                        String.fromCharCode(97 + col),
-                        (col + 0.5) * squareSize,
-                        size - squareSize * 0.15
-                    );
-                }
-                
-                // Ranks (1-8)
-                for (let row = 0; row < 8; row++) {
-                    ctx.fillText(
-                        (8 - row).toString(),
-                        squareSize * 0.15,
-                        (row + 0.5) * squareSize
-                    );
-                }
-            }
-            
-            drawPiece(ctx, piece, x, y, size) {
-                const isWhite = piece === piece.toUpperCase();
-                const pieceSymbol = this.getPieceSymbol(piece);
-                
-                // Draw circle background
-                ctx.beginPath();
-                ctx.arc(x + size/2, y + size/2, size * 0.35, 0, Math.PI * 2);
-                ctx.fillStyle = isWhite ? 'white' : 'black';
-                ctx.fill();
-                ctx.strokeStyle = isWhite ? 'black' : 'white';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Draw piece symbol
-                ctx.fillStyle = isWhite ? 'black' : 'white';
-                ctx.font = `bold ${size * 0.4}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(pieceSymbol, x + size/2, y + size/2);
-            }
-            
-            getPieceSymbol(piece) {
-                const symbols = {
-                    'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-                    'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-                };
-                return symbols[piece] || '?';
-            }
-            
-            copyFEN() {
-                const fenOutput = document.getElementById('fenOutput');
-                fenOutput.select();
-                document.execCommand('copy');
-                
-                // Visual feedback
-                const btn = document.getElementById('copyFENBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '✅ Copied!';
-                btn.style.background = '#28a745';
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.background = '';
-                }, 2000);
-            }
-            
-            saveFEN() {
-                if (!this.fen) {
-                    this.showError('No FEN to save');
-                    return;
-                }
-                
-                const blob = new Blob([this.fen], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'chess_position.fen';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
-            
-            saveBoardImage() {
-                const canvas = document.getElementById('boardCanvas');
-                const link = document.createElement('a');
-                link.download = 'chessboard.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }
-            
-            openInLichess() {
-                if (!this.fen) {
-                    this.showError('No FEN to open');
-                    return;
-                }
-                
-                const encodedFEN = encodeURIComponent(this.fen.split(' ')[0]);
-                window.open(`https://lichess.org/editor/${encodedFEN}`, '_blank');
-            }
-            
-            clear() {
-                // Reset everything
-                this.image = null;
-                this.fen = '';
-                this.pieces = [];
-                
-                document.getElementById('fileInput').value = '';
-                document.getElementById('previewSection').style.display = 'none';
-                document.getElementById('resultsSection').style.display = 'none';
-                document.getElementById('fenOutput').value = '';
-                document.getElementById('debugOutput').innerHTML = 'Waiting for image...';
-                this.hideError();
-            }
-            
-            // Manual board setup methods
-            initManualBoard() {
-                const container = document.getElementById('manualBoard');
-                container.innerHTML = '';
-                
-                for (let row = 0; row < 8; row++) {
-                    this.manualBoard[row] = [];
-                    for (let col = 0; col < 8; col++) {
-                        const square = document.createElement('div');
-                        square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
-                        square.dataset.row = row;
-                        square.dataset.col = col;
-                        square.addEventListener('click', () => this.placePieceOnSquare(row, col));
-                        
-                        container.appendChild(square);
-                        this.manualBoard[row][col] = '';
-                    }
-                }
-            }
-            
-            initPieceSelector() {
-                const pieces = ['K', 'Q', 'R', 'B', 'N', 'P', 'k', 'q', 'r', 'b', 'n', 'p', ''];
-                const container = document.getElementById('pieceSelector');
-                container.innerHTML = '';
-                
-                pieces.forEach(piece => {
-                    const option = document.createElement('div');
-                    option.className = 'piece-option';
-                    option.textContent = piece ? this.getPieceSymbol(piece) : '✕';
-                    option.title = piece ? (piece === piece.toUpperCase() ? 'White ' : 'Black ') + 
-                        this.getPieceName(piece) : 'Empty';
-                    option.dataset.piece = piece;
-                    
-                    if (piece === 'K') {
-                        option.classList.add('selected');
-                    }
-                    
-                    option.addEventListener('click', () => {
-                        document.querySelectorAll('.piece-option').forEach(el => {
-                            el.classList.remove('selected');
-                        });
-                        option.classList.add('selected');
-                        this.selectedPiece = piece;
-                    });
-                    
-                    container.appendChild(option);
-                });
-            }
-            
-            getPieceName(piece) {
-                const names = {
-                    'K': 'King', 'Q': 'Queen', 'R': 'Rook', 
-                    'B': 'Bishop', 'N': 'Knight', 'P': 'Pawn'
-                };
-                const upperPiece = piece.toUpperCase();
-                return names[upperPiece] || 'Unknown';
-            }
-            
-            placePieceOnSquare(row, col) {
-                const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
-                this.manualBoard[row][col] = this.selectedPiece;
-                
-                if (this.selectedPiece) {
-                    square.textContent = this.getPieceSymbol(this.selectedPiece);
-                    square.style.fontSize = '1.2rem';
-                } else {
-                    square.textContent = '';
-                }
-            }
-            
-            generateManualFEN() {
-                // Convert manual board to FEN
-                const fenRows = [];
-                
-                for (let row = 0; row < 8; row++) {
-                    let fenRow = '';
-                    let emptyCount = 0;
-                    
-                    for (let col = 0; col < 8; col++) {
-                        const piece = this.manualBoard[row][col];
-                        
-                        if (piece === '') {
-                            emptyCount++;
-                        } else {
-                            if (emptyCount > 0) {
-                                fenRow += emptyCount;
-                                emptyCount = 0;
-                            }
-                            fenRow += piece;
-                        }
-                    }
-                    
-                    if (emptyCount > 0) {
-                        fenRow += emptyCount;
-                    }
-                    
-                    fenRows.push(fenRow);
-                }
-                
-                const boardFEN = fenRows.join('/');
-                const fullFEN = `${boardFEN} w - - 0 1`;
-                
-                // Display the result
-                this.fen = fullFEN;
-                this.pieces = this.parseFEN(fullFEN);
-                
-                document.getElementById('fenOutput').value = fullFEN;
-                this.renderChessboard();
-                
-                // Show success message
-                const alert = document.createElement('div');
-                alert.className = 'alert alert-success';
-                alert.textContent = 'Manual FEN generated successfully!';
-                document.querySelector('.manual-entry').prepend(alert);
-                
-                setTimeout(() => alert.remove(), 3000);
-            }
-        }
-        
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            window.chessExtractor = new ChessFENExtractor();
-        });
-    </script>
-</body>
+  </body>
 </html>
